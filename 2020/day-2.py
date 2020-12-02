@@ -1,15 +1,12 @@
+import re
+
 def is_valid_password_part_2(input):
-	splitPos = input.index(":")
+	m = re.search('([0-9]+)-([0-9]+) ([a-z]+): ([a-z]+)', input)
+	minRange = m.group(1)
+	maxRange = m.group(2)
+	letter   = m.group(3)
+	password = m.group(4)
 
-	rules = input[:splitPos]
-	rulesSplitPos = rules.index(" ")
-	rangeStr = rules[:rulesSplitPos]
-	dashSplitPos = rangeStr.index("-")
-
-	minRange = rangeStr[:dashSplitPos]
-	maxRange = rangeStr[dashSplitPos + 1:]
-	letter = rules[rulesSplitPos + 1:]
-	password = input[splitPos + 2:]
 	letterCount = 0
 
 	if password[int(minRange) - 1] == letter:
@@ -20,19 +17,13 @@ def is_valid_password_part_2(input):
 
 	return letterCount == 1
 
-
 def is_valid_password_part_1(input):
-	splitPos = input.index(":")
+	m = re.search('([0-9]+)-([0-9]+) ([a-z]+): ([a-z]+)', input)
+	minRange = m.group(1)
+	maxRange = m.group(2)
+	letter   = m.group(3)
+	password = m.group(4)
 
-	rules = input[:splitPos]
-	rulesSplitPos = rules.index(" ")
-	rangeStr = rules[:rulesSplitPos]
-	dashSplitPos = rangeStr.index("-")
-
-	minRange = rangeStr[:dashSplitPos]
-	maxRange = rangeStr[dashSplitPos + 1:]
-	letter = rules[rulesSplitPos + 1:]
-	password = input[splitPos + 2:]
 	letterCount = 0
 	for i in password:
 		if i == letter:
