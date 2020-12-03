@@ -1,17 +1,10 @@
-inputsArray = []
-inputText = input("Input: ")
-while inputText != '':
-	inputsArray.append(int(inputText))
-	inputText = input("Input: ")
+inputsArray = open("day-1.in", "r").read().split("\n")
+inputsArray.pop()
 
 for i in range(len(inputsArray)):
 	for j in range(i, len(inputsArray)):
+		if int(inputsArray[i]) + int(inputsArray[j]) == 2020:
+			print("Part 1: " + str(int(inputsArray[i]) * int(inputsArray[j])))
 		for k in range(j, len(inputsArray)):
-			if inputsArray[i] + inputsArray[j] + inputsArray[k] == 2020:
-				print(inputsArray[i])
-				print(inputsArray[j])
-				print(inputsArray[k])
-				print(inputsArray[i] * inputsArray[j] * inputsArray[k])
-
-#print(do_something(inputText))
-
+			if int(inputsArray[i]) + int(inputsArray[j]) + int(inputsArray[k]) == 2020:
+				print("Part 2: " + str(int(inputsArray[i]) * int(inputsArray[j]) * int(inputsArray[k])))

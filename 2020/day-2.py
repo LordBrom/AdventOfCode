@@ -32,11 +32,15 @@ def is_valid_password_part_1(input):
 		return True
 	return False
 
-count = 0
-inputText = input("Input: ")
-while inputText != '':
-	if is_valid_password_part_2(inputText):
-		count += 1
-	inputText = input("Input: ")
+count1 = 0
+count2 = 0
+inputText = open("day-2.in", "r").read().split("\n")
+inputText.pop()
+for text in inputText:
+	if is_valid_password_part_1(text):
+		count1 += 1
+	if is_valid_password_part_2(text):
+		count2 += 1
 
-print(count)
+print("part 1:" + str(count1))
+print("part 2:" + str(count2))
