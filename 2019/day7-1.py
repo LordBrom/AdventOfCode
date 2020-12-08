@@ -1,23 +1,15 @@
-debug = False
-
-def debug_log(msg):
-	if debug:
-		print(msg)
+import itertools
 
 def get_num(intcode, pos, mode = 0):
 	if mode == 0:
-		debug_log("Pulling " + intcode[int(intcode[pos])] + " from " + intcode[pos] + " via " + str(pos))
 		return int(intcode[int(intcode[pos])])
 	elif mode == 1:
-		debug_log("Pulling " + intcode[pos] + " from " + str(pos))
 		return int(intcode[pos])
 
 def set_num(intcode, pos, val, mode = 0):
 	if mode == 0:
-		debug_log("Setting " + str(val) + " to " + intcode[pos] + " via " + str(pos))
 		intcode[int(intcode[pos])] = str(val)
 	elif mode == 1:
-		debug_log("Setting " + str(val) + " to " + str(pos))
 		intcode[pos] = str(val)
 	return intcode
 
@@ -26,17 +18,21 @@ def get_op_code(intcode, pos):
 	opCode += ('0' * (5 - len(opCode)))
 	return opCode
 
+def previous_amp(num, maxAmp):
+	if num == 0:
+		return maxAmp
+	else:
+		return num - 1
 
-def intcode_computer(intcode):
+def intcode_computer(intcode, input1, input2):
 
-	count = 0
 	opCodePos = 0
 	opCodeFull = get_op_code(intcode, opCodePos)
 	opCode = opCodeFull[:2]
-	print("")
+
+	outputVal = 0
+
 	while opCode != '99':
-		count += 1
-		debug_log("step " + str(count) + ", running op code: " + opCode)
 		if opCode == '10':
 			arg1 = get_num(intcode, opCodePos + 1, int(opCodeFull[2]) or 0)
 			arg2 = get_num(intcode, opCodePos + 2, int(opCodeFull[3]) or 0)
@@ -53,29 +49,27 @@ def intcode_computer(intcode):
 			opCodePos += 4
 
 		elif opCode == '30':
-			val = input("Enter Code: ")
-			set_num(intcode, opCodePos + 1, val, int(opCodeFull[2]) or 0)
+			if opCodePos == 0:
+				val = input1
+			else:
+				val = input2
+			intcode = set_num(intcode, opCodePos + 1, val, int(opCodeFull[2]) or 0)
 			opCodePos += 2
 
 		elif opCode == '40':
-			print("Output: " + str(get_num(intcode, opCodePos + 1, int(opCodeFull[2]) or 0)))
-			opCodePos += 2
+			return get_num(intcode, opCodePos + 1, int(opCodeFull[2]) or 0)
 
 		elif opCode == '50':
 			arg1 = get_num(intcode, opCodePos + 1, int(opCodeFull[2]) or 0)
-			debug_log("opCodePos " + str(opCodePos))
 			if arg1 != 0:
 				opCodePos = get_num(intcode, opCodePos + 2, int(opCodeFull[3]) or 0)
-				debug_log("opCodePos " + str(opCodePos))
 			else:
 				opCodePos += 3
 
 		elif opCode == '60':
 			arg1 = get_num(intcode, opCodePos + 1, int(opCodeFull[2]) or 0)
-			debug_log("opCodePos " + str(opCodePos))
 			if arg1 == 0:
 				opCodePos = get_num(intcode, opCodePos + 2, int(opCodeFull[3]) or 0)
-				debug_log("opCodePos " + str(opCodePos))
 			else:
 				opCodePos += 3
 
@@ -97,20 +91,21 @@ def intcode_computer(intcode):
 				intcode = set_num(intcode, opCodePos + 3, 0, int(opCodeFull[4]) or 0)
 			opCodePos += 4
 
-		else:
-			print("code pos: " + str(opCodePos))
-			print("op code: " + str(opCodeFull))
-			print(intcode)
-			print("bad code: " + opCode)
-			return
-
-		debug_log(intcode)
 		opCodeFull = get_op_code(intcode, opCodePos)
 		opCode = opCodeFull[:2]
-		debug_log("")
+	return outputVal
 
-	return intcode
-
-inFile = open("day-5.in", "r").read().split("\n")
+inFile = open("day7.in", "r").read().split("\n")
 inFile.pop()
-intcode_computer(inFile[0].split(","))
+code = inFile[0].split(",")
+
+lastOutput = 0
+maxOutput = 0
+for pattern in itertools.permutations(range(5), 5):
+	print(pattern)
+	for i in pattern:
+		lastOutput = intcode_computer(code, i, lastOutput)
+	maxOutput = max(maxOutput, lastOutput)
+
+
+print(maxOutput)

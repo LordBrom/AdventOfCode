@@ -50,8 +50,7 @@ class ObjectMass:
 		else:
 			return 1 + best
 
-
-inFile = open("day-6.in", "r").read().split("\n")
+inFile = open("day6.in", "r").read().split("\n")
 inFile.pop()
 
 for objectPair in inFile:
@@ -69,11 +68,4 @@ for objectPair in inFile:
 	if not parent == GALAXY_CENTER:
 		GALAXY[parent].add_child_object(child)
 
-count = 0
-for objectMass in GALAXY:
-	count += GALAXY[objectMass].count_indirect_orbits()
-
-print("Part 1: " + str(count))
-
-print("Part 2: " + str(GALAXY['YOU'].find_destination('SAN')))
-
+print(GALAXY['YOU'].find_destination('SAN'))

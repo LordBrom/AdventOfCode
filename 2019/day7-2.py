@@ -114,7 +114,7 @@ def intcode_computer(intcode, inputPattern):
 		opCode = opCodeFull[:2]
 	return outputVal
 
-inFile = open("day-7.in", "r").read().split("\n")
+inFile = open("day7.in", "r").read().split("\n")
 inFile.pop()
 code = inFile[0].split(",")
 
