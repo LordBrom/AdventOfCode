@@ -9,11 +9,11 @@ def calc_fuel(mass):
 
 total = 0
 
-num = input("Enter mass:")
+inFile = open("day1.in", "r").read().split("\n")
+inFile.pop()
 
-while num != "0":
+for num in inFile:
 	total += calc_fuel(num)
-	num = input("Enter mass:")
 
 print(total)
 

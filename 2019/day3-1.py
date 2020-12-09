@@ -19,28 +19,27 @@ def path_wire(path):
 			result.append([posx, posy])
 	return result
 
-wire1 = input("Enter wire 1:").split(',')
-wire2 = input("Enter wire 2:").split(',')
+inFile = open("day3.in", "r").read().split("\n")
+
+wire1 = inFile[0].split(',')
+wire2 = inFile[1].split(',')
 
 wirePath1 = path_wire(wire1)
 wirePath2 = path_wire(wire2)
 
-crossPoints = [x for x in wirePath1 if x in wirePath2]
 minDist = 0
 
 
+for i in wirePath1:
+	if i[0] == 0 and i[1] == 0:
+		continue
+	elif i in wirePath2:
+		calcDist = abs(0 - i[0]) + abs(0 - i[1])
+		if minDist == 0:
+			minDist = calcDist
+		else:
+			minDist = min(calcDist, minDist)
 
-#for i in wirePath1:
-#	if i[0] == 0 and i[1] == 0:
-#		continue
-#	elif i in wirePath2:
-#		crossPoints.append(i)
-#		calcDist = abs(0 - i[0]) + abs(0 - i[1])
-#		if minDist == 0:
-#			minDist = calcDist
-#		else:
-#			minDist = min(calcDist, minDist)
-
-print(crossPoints)
+print(minDist)
 
 
