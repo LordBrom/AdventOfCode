@@ -95,17 +95,14 @@ def intcode_computer(intcode, input1, input2):
 		opCode = opCodeFull[:2]
 	return outputVal
 
-inFile = open("day7.in", "r").read().split("\n")
-inFile.pop()
-code = inFile[0].split(",")
+inFile = open("day7.in", "r").read().split(",")
 
 lastOutput = 0
 maxOutput = 0
 for pattern in itertools.permutations(range(5), 5):
-	print(pattern)
+	lastOutput = 0
 	for i in pattern:
-		lastOutput = intcode_computer(code, i, lastOutput)
+		lastOutput = intcode_computer(inFile, i, lastOutput)
 	maxOutput = max(maxOutput, lastOutput)
-
 
 print(maxOutput)

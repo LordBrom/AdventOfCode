@@ -1,7 +1,5 @@
 import itertools
-
-OPCODE_POS = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-OPCODE_MEMORY = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+import copy
 
 def get_num(intcode, pos, mode = 0):
 	if mode == 0:
@@ -27,101 +25,103 @@ def previous_amp(num, maxAmp):
 	else:
 		return num - 1
 
-def intcode_computer(intcode, inputPattern):
+def next_amp(num, maxAmp):
+	if num == maxAmp - 1:
+		return 0
+	else:
+		return num + 1
 
-	#opCodePos = 0
-	currentAmp = 0
-	maxAmp = 5
-	opCodePos = [0, 0, 0, 0, 0]
-	opCodeInput = [0, "", "", "", ""]
-	opCodeFull = get_op_code(intcode, opCodePos[currentAmp])
+def intcode_computer(intcode, pattern):
+
+	curAmp = 0
+	lastOutput = 0
+	aryIntcode = []
+	aryPointer = []
+
+	for i in range(len(pattern)):
+		aryIntcode.append(copy.deepcopy(intcode))
+		aryPointer.append(0)
+
+	opCodeFull = get_op_code(aryIntcode[curAmp], aryPointer[curAmp])
 	opCode = opCodeFull[:2]
-	intcodeList = [intcode,intcode,intcode,intcode,intcode]
 
-	outputVal = 0
-
-	while opCode != '99':
-		if opCode == '10':
-			arg1 = get_num(intcodeList[currentAmp], opCodePos[currentAmp] + 1, int(opCodeFull[2]) or 0)
-			arg2 = get_num(intcodeList[currentAmp], opCodePos[currentAmp] + 2, int(opCodeFull[3]) or 0)
+	while opCode != '99' or curAmp != 4:
+		#print(str(curAmp) + " : " + str(opCode))
+		if opCode == '99':
+			curAmp = next_amp(curAmp, 5)
+		elif opCode == '10':
+			arg1 = get_num(aryIntcode[curAmp], aryPointer[curAmp] + 1, int(opCodeFull[2]) or 0)
+			arg2 = get_num(aryIntcode[curAmp], aryPointer[curAmp] + 2, int(opCodeFull[3]) or 0)
 			val = arg1 + arg2
 
-			intcodeList[currentAmp] = set_num(intcodeList[currentAmp], opCodePos[currentAmp] + 3, val, int(opCodeFull[4]) or 0)
-			opCodePos[currentAmp] += 4
+			aryIntcode[curAmp] = set_num(aryIntcode[curAmp], aryPointer[curAmp] + 3, val, int(opCodeFull[4]) or 0)
+			aryPointer[curAmp] += 4
 
 		elif opCode == '20':
-			arg1 = get_num(intcodeList[currentAmp], opCodePos[currentAmp] + 1, int(opCodeFull[2]) or 0)
-			arg2 = get_num(intcodeList[currentAmp], opCodePos[currentAmp] + 2, int(opCodeFull[3]) or 0)
+			arg1 = get_num(aryIntcode[curAmp], aryPointer[curAmp] + 1, int(opCodeFull[2]) or 0)
+			arg2 = get_num(aryIntcode[curAmp], aryPointer[curAmp] + 2, int(opCodeFull[3]) or 0)
 			val = arg1 * arg2
-			intcodeList[currentAmp] = set_num(intcodeList[currentAmp], opCodePos[currentAmp] + 3, val, int(opCodeFull[4]) or 0)
-			opCodePos[currentAmp] += 4
+			aryIntcode[curAmp] = set_num(aryIntcode[curAmp], aryPointer[curAmp] + 3, val, int(opCodeFull[4]) or 0)
+			aryPointer[curAmp] += 4
 
 		elif opCode == '30':
-			if opCodePos[currentAmp] == 0:
-				intcodeList[currentAmp] = set_num(intcodeList[currentAmp], opCodePos[currentAmp] + 1, currentAmp + 5, int(opCodeFull[2]) or 0)
-				opCodePos[currentAmp] += 2
+			if aryPointer[curAmp] == 0:
+				val = pattern[curAmp] + 5
 			else:
-				if opCodeInput[currentAmp] == "":
-					currentAmp += 1
-					currentAmp = currentAmp % maxAmp
-				else:
-					val = opCodeInput[currentAmp]
-					print(intcodeList[currentAmp])
-					intcodeList[currentAmp] = set_num(intcodeList[currentAmp], opCodePos[currentAmp] + 1, val, int(opCodeFull[2]) or 0)
-					print(intcodeList[currentAmp])
-					opCodePos[currentAmp] += 2
-					opCodeInput[currentAmp] = ""
+				val = lastOutput
+			aryIntcode[curAmp] = set_num(aryIntcode[curAmp], aryPointer[curAmp] + 1, val, int(opCodeFull[2]) or 0)
+			aryPointer[curAmp] += 2
 
 		elif opCode == '40':
-			nextAmp = currentAmp + 1
-			nextAmp = nextAmp % maxAmp
-			opCodeInput[nextAmp] = get_num(intcodeList[currentAmp], opCodePos[currentAmp] + 1, int(opCodeFull[2]) or 0)
-			opCodePos[currentAmp] += 2
+			lastOutput = get_num(aryIntcode[curAmp], aryPointer[curAmp] + 1, int(opCodeFull[2]) or 0)
+			aryPointer[curAmp] += 2
+			curAmp = next_amp(curAmp, 5)
 
 		elif opCode == '50':
-			arg1 = get_num(intcodeList[currentAmp], opCodePos[currentAmp] + 1, int(opCodeFull[2]) or 0)
+			arg1 = get_num(aryIntcode[curAmp], aryPointer[curAmp] + 1, int(opCodeFull[2]) or 0)
 			if arg1 != 0:
-				opCodePos[currentAmp] = get_num(intcodeList[currentAmp], opCodePos[currentAmp] + 2, int(opCodeFull[3]) or 0)
+				aryPointer[curAmp] = get_num(aryIntcode[curAmp], aryPointer[curAmp] + 2, int(opCodeFull[3]) or 0)
 			else:
-				opCodePos[currentAmp] += 3
+				aryPointer[curAmp] += 3
 
 		elif opCode == '60':
-			arg1 = get_num(intcodeList[currentAmp], opCodePos[currentAmp] + 1, int(opCodeFull[2]) or 0)
+			arg1 = get_num(aryIntcode[curAmp], aryPointer[curAmp] + 1, int(opCodeFull[2]) or 0)
 			if arg1 == 0:
-				opCodePos[currentAmp] = get_num(intcodeList[currentAmp], opCodePos[currentAmp] + 2, int(opCodeFull[3]) or 0)
+				aryPointer[curAmp] = get_num(aryIntcode[curAmp], aryPointer[curAmp] + 2, int(opCodeFull[3]) or 0)
 			else:
-				opCodePos[currentAmp] += 3
+				aryPointer[curAmp] += 3
 
 		elif opCode == '70':
-			arg1 = get_num(intcodeList[currentAmp], opCodePos[currentAmp] + 1, int(opCodeFull[2]) or 0)
-			arg2 = get_num(intcodeList[currentAmp], opCodePos[currentAmp] + 2, int(opCodeFull[3]) or 0)
+			arg1 = get_num(aryIntcode[curAmp], aryPointer[curAmp] + 1, int(opCodeFull[2]) or 0)
+			arg2 = get_num(aryIntcode[curAmp], aryPointer[curAmp] + 2, int(opCodeFull[3]) or 0)
 			if arg1 < arg2:
-				intcodeList[currentAmp] = set_num(intcodeList[currentAmp], opCodePos[currentAmp] + 3, 1, int(opCodeFull[4]) or 0)
+				aryIntcode[curAmp] = set_num(aryIntcode[curAmp], aryPointer[curAmp] + 3, 1, int(opCodeFull[4]) or 0)
 			else:
-				intcodeList[currentAmp] = set_num(intcodeList[currentAmp], opCodePos[currentAmp] + 3, 0, int(opCodeFull[4]) or 0)
-			opCodePos[currentAmp] += 4
+				aryIntcode[curAmp] = set_num(aryIntcode[curAmp], aryPointer[curAmp] + 3, 0, int(opCodeFull[4]) or 0)
+			aryPointer[curAmp] += 4
 
 		elif opCode == '80':
-			arg1 = get_num(intcodeList[currentAmp], opCodePos[currentAmp] + 1, int(opCodeFull[2]) or 0)
-			arg2 = get_num(intcodeList[currentAmp], opCodePos[currentAmp] + 2, int(opCodeFull[3]) or 0)
+			arg1 = get_num(aryIntcode[curAmp], aryPointer[curAmp] + 1, int(opCodeFull[2]) or 0)
+			arg2 = get_num(aryIntcode[curAmp], aryPointer[curAmp] + 2, int(opCodeFull[3]) or 0)
 			if arg1 == arg2:
-				intcodeList[currentAmp] = set_num(intcodeList[currentAmp], opCodePos[currentAmp] + 3, 1, int(opCodeFull[4]) or 0)
+				aryIntcode[curAmp] = set_num(aryIntcode[curAmp], aryPointer[curAmp] + 3, 1, int(opCodeFull[4]) or 0)
 			else:
-				intcodeList[currentAmp] = set_num(intcodeList[currentAmp], opCodePos[currentAmp] + 3, 0, int(opCodeFull[4]) or 0)
-			opCodePos[currentAmp] += 4
+				aryIntcode[curAmp] = set_num(aryIntcode[curAmp], aryPointer[curAmp] + 3, 0, int(opCodeFull[4]) or 0)
+			aryPointer[curAmp] += 4
+		else:
+			return lastOutput
 
-		opCodeFull = get_op_code(intcodeList[currentAmp], opCodePos[currentAmp])
+		opCodeFull = get_op_code(aryIntcode[curAmp], aryPointer[curAmp])
 		opCode = opCodeFull[:2]
-	return outputVal
+	return lastOutput
 
-inFile = open("day7.in", "r").read().split("\n")
-inFile.pop()
-code = inFile[0].split(",")
+inFile = open("day7.in", "r").read().split(",")
 
+
+lastOutput = 0
 maxOutput = 0
 for pattern in itertools.permutations(range(5), 5):
-	lastOutput = intcode_computer(code, pattern)
-	maxOutput = max(maxOutput, int(lastOutput))
+	lastOutput = intcode_computer(inFile, pattern)
+	maxOutput = max(maxOutput, lastOutput)
 
-
-#intcode_computer(inFile[0].split(","))
+print(maxOutput)
