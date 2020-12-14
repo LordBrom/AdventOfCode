@@ -4,6 +4,8 @@ class IntcodeComputer:
 		self.intcode = []
 		for i in intcode:
 			self.intcode.append(int(i))
+		for x in range(10000):
+			self.intcode.append(0)
 		self.pointer = 0
 		self.opCodeFull = ""
 		self.opCode = ""
@@ -25,13 +27,12 @@ class IntcodeComputer:
 		return int(self.opCodeFull[pos]) or 0
 
 	def get_pos(self, offset, mode):
-		print(offset, mode, self.relBase)
 		if mode == 0: # position mode
 			return self.intcode[offset]
 		elif mode == 1: # immediate mode
 			return offset
 		elif mode == 2: # relative mode
-			return self.intcode[self.relBase + offset]
+			return self.relBase + self.intcode[offset]
 
 	def get_num(self, arg):
 		mode = self.get_mode(arg + 1)
@@ -48,7 +49,7 @@ class IntcodeComputer:
 		self.opCodeFull += ('0' * (5 - len(self.opCodeFull)))
 		self.opCode = self.opCodeFull[:2]
 
-	def run(self, inpVal = ""):
+	def run(self, inpVal = None):
 
 		self.parse_op_code()
 
@@ -78,9 +79,9 @@ class IntcodeComputer:
 			elif self.opCode == '30':
 				if inputUsed:
 					return outputVal
-				if inpVal == "":
+				if not inpVal:
 					inpVal = input("Needs input: ")
-				val = inpVal
+				val = int(inpVal)
 				inputUsed = True
 				self.debug_print(["setting", val])
 				self.set_num(1, val)
@@ -89,6 +90,7 @@ class IntcodeComputer:
 			elif self.opCode == '40':
 				self.debug_print(["output", self.get_num(1)])
 				outputVal = self.get_num(1)
+				print(outputVal)
 				self.pointer += 2
 
 			elif self.opCode == '50':
@@ -125,7 +127,7 @@ class IntcodeComputer:
 
 			elif self.opCode == '90':
 				arg1 = self.get_num(1)
-				print(["relBase from", self.relBase, "to", arg1])
+				self.debug_print(["relBase from", self.relBase, "to", arg1])
 				self.relBase += arg1
 				self.pointer += 2
 
