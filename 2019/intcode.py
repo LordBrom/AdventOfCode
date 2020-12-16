@@ -49,9 +49,11 @@ class IntcodeComputer:
 		self.opCodeFull += ('0' * (5 - len(self.opCodeFull)))
 		self.opCode = self.opCodeFull[:2]
 
-	def run(self, inpVal = None):
+	def run(self, inpVal = None, outLast = True):
 
 		self.parse_op_code()
+
+		outVals = []
 
 		outputVal = 0
 		inputUsed = False
@@ -78,7 +80,10 @@ class IntcodeComputer:
 
 			elif self.opCode == '30':
 				if inputUsed:
-					return outputVal
+					if outLast:
+						return outputVal
+					else:
+						return outVals
 				if not inpVal:
 					inpVal = input("Needs input: ")
 				val = int(inpVal)
@@ -90,7 +95,8 @@ class IntcodeComputer:
 			elif self.opCode == '40':
 				self.debug_print(["output", self.get_num(1)])
 				outputVal = self.get_num(1)
-				print(outputVal)
+				outVals.append(outputVal)
+				self.debug_print(["OUTPUT:", outputVal])
 				self.pointer += 2
 
 			elif self.opCode == '50':
@@ -137,4 +143,7 @@ class IntcodeComputer:
 
 			self.parse_op_code()
 
-		return outputVal
+		if outLast:
+			return outputVal
+		else:
+			return outVals
