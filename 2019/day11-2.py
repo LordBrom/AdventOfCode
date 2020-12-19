@@ -79,5 +79,3 @@ paintJob.start_job(inFile)
 
 paintJob.print_job()
 
-print(len(paintJob.painted))
-
