@@ -71,7 +71,6 @@ class PaintJob:
 			else:
 				self.botPosY -= 1
 
-
 inFile = open("day11.in", "r").read().split(",")
 
 paintJob = PaintJob()

@@ -64,8 +64,6 @@ def path_wires(wire1, wire2):
 					minDist = min(calcDist, minDist)
 	return minDist + 1
 
-
-
 inFile = open("day3.in", "r").read().split("\n")
 
 wire1 = inFile[0].split(',')

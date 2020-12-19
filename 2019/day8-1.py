@@ -9,7 +9,6 @@ IMAGE = []
 
 inFile = open("day8.in", "r").read()
 
-
 reFind = re.findall(".{" + str(LAYER_SIZE) + "}", inFile)
 
 min0 = -1
