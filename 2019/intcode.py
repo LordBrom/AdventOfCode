@@ -84,7 +84,7 @@ class IntcodeComputer:
 						return outputVal
 					else:
 						return outVals
-				if not inpVal:
+				if inpVal == None:
 					inpVal = input("Needs input: ")
 				val = int(inpVal)
 				inputUsed = True
