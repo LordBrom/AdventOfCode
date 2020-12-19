@@ -29,7 +29,6 @@ wirePath2 = path_wire(wire2)
 
 minDist = 0
 
-
 for i in wirePath1:
 	if i[0] == 0 and i[1] == 0:
 		continue
