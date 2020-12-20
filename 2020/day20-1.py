@@ -1,14 +1,18 @@
 import re
 import math
 import copy
+#import numpy
 
-ROTATE_RIGHT = -1
-ROTATE_LEFT = 1
+ROTATE_RIGHT = 1
+ROTATE_LEFT = -1
 
 UP = 0
 RIGHT = 1
 DOWN = 2
 LEFT = 3
+
+DIR_ENUM = ["U", "R", "D", "L"]
+FLIPPED_ENUM = ["I", "U"]
 
 WIDTH = 3
 LENGTH = 3
@@ -22,120 +26,14 @@ class TileBoard:
 		self.width = width
 		self.length = length
 		self.tiles = tiles
-		self.board = []
-		for l in range(length):
-			newRow = []
-			for w in range(width):
-				newRow.append(None)
-			self.board.append(newRow)
 
-		self.tileIDs = {}
-
-		startTile = None
-
-		count = 1
-
+		result = 1
 		for tile in self.tiles:
-			self.tileIDs[tile.tileID] = tile
 			tile.set_possible(self.tiles)
-			#if tile.isCorner and tile.tileID == '1951':
 			if tile.isCorner:
-				count *= int(tile.tileID)
-				#print(tile.tileID)
-				startTile = tile
-		print(count)
-		return
-		if startTile == None:
-			raise "No corner tile found"
+				result *= int(tile.tileID)
 
-		if startTile.neighbors[0] == None and startTile.neighbors[1] == None:
-			startTile.rotate_tile(ROTATE_LEFT)
-
-		elif startTile.neighbors[1] == None and startTile.neighbors[2] == None:
-			startTile.rotate_tile(ROTATE_RIGHT)
-			startTile.rotate_tile(ROTATE_RIGHT)
-
-		elif startTile.neighbors[2] == None and startTile.neighbors[3] == None:
-			startTile.rotate_tile(ROTATE_RIGHT)
-
-		self.board[0][0] = startTile
-
-		self.fill_board(startTile, copy.deepcopy(self.board))
-
-	def is_board_valid(self, board):
-		for row in board:
-			for tile in row:
-				if tile:
-					pass
-					#print(tile)
-
-	def is_board_full(self, board):
-		for row in board:
-			for tile in row:
-				if not tile:
-					return False
-		return True
-
-	def fill_board(self, tile, mockBoard, used = [], pos = [0, 0]):
-		self.print_board(mockBoard)
-		if tile.tileID in used:
-			return False
-
-		used.append(tile.tileID)
-		#print(pos, tile)
-		mockBoard[pos[0]][pos[1]] = tile
-		#print(pos)
-		#print(mockBoard)
-		#self.print_board(mockBoard)
-		if self.is_board_full(mockBoard):
-			self.board = mockBoard
-
-		for dir in [0,1,2,3]:
-			relDir = tile.get_rel_dir(dir)
-
-			#if tile.neighbors[dir] == None:
-			#	continue
-			dX = pos[0]
-			dY = pos[1]
-			if relDir == 0:
-				dX -= 1
-			elif relDir == 1:
-				dY += 1
-			elif relDir == 2:
-				dX += 1
-			elif relDir == 3:
-				dY -= 1
-
-			if dX < 0 or dY < 0:
-				continue
-			if dX >= self.length or dY >= self.width:
-				continue
-
-			#print(tile.tileID, dir, tile.direction, tile.possibleNeighbors)
-
-			for n in tile.possibleNeighbors[relDir]:
-				#print([dX, dY])
-				nTiles = self.tileIDs[n].find_edge(tile.get_edge(relDir))
-				for tiles in nTiles:
-					#print(tiles)
-					self.tileIDs[n].direction = tiles[0]
-					if tile.isFlipped == 0:
-						self.tileIDs[n].isFlipped = tiles[1]
-					else:
-						self.tileIDs[n].isFlipped = abs(tiles[1] - 1)
-					self.fill_board(self.tileIDs[n], copy.deepcopy(mockBoard), copy.deepcopy(used), [dX, dY])
-
-	def print_board(self, board):
-		print("---------------")
-		for i in board:
-			outStr = ""
-			for t in i:
-				if t:
-					outStr += t.tileID + " "
-				else:
-					outStr += "xxxx "
-			print(outStr)
-
+		print(result)
 
 class Tile:
 	def __init__(self, tileID, tileArray):
@@ -176,41 +74,6 @@ class Tile:
 		self.possibleNeighbors = [[],[],[],[]]
 		self.neighbors = [[],[],[],[]]
 
-	def has_edge(self, edge):
-		try:
-			return self.edges.index(edge)
-		except:
-			return None
-
-	def get_edge(self, dir):
-		#print("get_edge", self.tileID, self.direction, dir, self.isFlipped, self.edges[easyMod(dir + self.direction)][self.isFlipped])
-		return self.edges[dir][self.isFlipped]
-
-	def get_rel_dir(self, dir):
-		if self.isFlipped == 0:
-			change = self.direction
-		else:
-			change = self.direction
-
-		diff = dir + change
-
-		if diff < 0:
-			print(diff, 4 + diff)
-			diff = 4 + diff
-
-		return easyMod(diff)
-
-
-	# 1 = right
-	# -1 = left
-	def rotate_tile(self, dir, deg = 1):
-		if not dir in [1, -1]:
-			raise "Argument 'dir' must be in [1, -1]"
-		self.direction += dir * deg
-		if self.direction < 0:
-			self.direction -= 4
-		self.direction = easyMod(self.direction)
-
 	def set_possible(self, tiles):
 		for num, edge in enumerate(self.edges):
 			for tile in tiles:
@@ -223,22 +86,6 @@ class Tile:
 
 		if self.neighbors.count(None) == 2:
 			self.isCorner = True
-
-	def find_edge(self, toFind):
-		result = []
-		for num, edges in enumerate(self.edges):
-			if toFind == edges[0]:
-				result.append([num, 0])
-			elif toFind == edges[1]:
-				result.append([num, 1])
-		return result
-
-	def print_tile(self):
-		pass
-
-
-
-
 
 inFile = open("day20.in", "r").read().split("\n\n")
 
@@ -254,4 +101,3 @@ for tileData in inFile:
 
 board = TileBoard(LENGTH, WIDTH, tiles)
 
-print(board.board)
