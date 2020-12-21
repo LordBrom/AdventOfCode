@@ -14,8 +14,8 @@ LEFT = 3
 DIR_ENUM = ["U", "R", "D", "L"]
 FLIPPED_ENUM = ["I", "U"]
 
-WIDTH = 3
-LENGTH = 3
+WIDTH = 12
+LENGTH = 12
 # tiles[LENGTH][WIDTH]
 
 def easyMod(val, modVal = 4):
@@ -39,7 +39,7 @@ class TileBoard:
 		for tile in self.tiles:
 			self.tileIDs[tile.tileID] = tile
 			tile.set_possible(self.tiles)
-			if tile.isCorner and tile.tileID == '1951':
+			if tile.isCorner:
 				startTile = tile
 
 		if startTile == None:
@@ -56,13 +56,13 @@ class TileBoard:
 			startTile.rotate_tile(ROTATE_RIGHT)
 
 		#startTile.direction = 3
-		#startTile.isFlipped = 1
+		#startTile.flipH = 1
 
 		#self.board[0][0] = startTile
 		#self.print_board(self.board)
 		#startTile.rotate_tile(ROTATE_RIGHT)
 		#startTile.rotate_tile(ROTATE_RIGHT)
-		#startTile.isFlipped = 1
+		#startTile.flipH = 1
 
 		#self.board[0][1] = self.tileIDs["2311"]
 		#self.board[0][2] = self.tileIDs["3079"]
@@ -100,8 +100,7 @@ class TileBoard:
 			pass
 		return True
 
-	def fill_board(self, tile, mockBoard, used = [], pos = [0, 0], debug = False):
-
+	def fill_board(self, tile, mockBoard, used = [], pos = [0, 0], debug = True):
 		if tile.tileID in used:
 			return
 
@@ -109,6 +108,7 @@ class TileBoard:
 		newUsed.append(tile.tileID)
 		newBoard = copy.deepcopy(mockBoard)
 		newBoard[pos[0]][pos[1]] = tile
+		self.print_board(newBoard)
 
 		if debug:
 			self.print_board(newBoard)
@@ -144,18 +144,36 @@ class TileBoard:
 				nTiles = nextTile.find_edge(tile.get_edge(relDir))
 				for tiles in nTiles:
 
-					nextTile.direction = easyMod(dir + 2) - tiles[0]
-					if nextTile.direction < 0:
-						nextTile.direction = 4 + nextTile.direction
+					#print(nTiles)
 
-					if tile.isFlipped == 0:
-						nextTile.isFlipped = tiles[1]
-					else:
-						print(tiles[1], tiles[1] - 1, abs(tiles[1] - 1))
-						nextTile.isFlipped = abs(tiles[1] - 1)
+					tileEdge = tile.get_edge(relDir)
+					nextTile.flipV = 1
+					nextEdge = nextTile.get_edge(relDir)
+					#print(tileEdge)
+					#print(nextEdge)
+
+					nextTile.orient_tile(dir, tileEdge)
+
+					#nextTile.direction = easyMod(dir + 2) - tiles[0]
+					#if nextTile.direction < 0:
+					#	nextTile.direction = 4 + nextTile.direction
+
+					#if dir in [0,2]:
+					#	print("H", tile.flipH)
+					#	if tile.flipH == 0:
+					#		nextTile.flipH = tiles[1]
+					#	else:
+					#		nextTile.flipH = abs(tiles[1] - 1)
+					#elif dir in [1,3]:
+					#	print("V", tile.flipV)
+					#	if tile.flipV == 0:
+					#		nextTile.flipV = tiles[1]
+					#	else:
+					#		nextTile.flipV = abs(tiles[1] - 1)
 
 					if debug:
 						input()
+
 					self.fill_board(nextTile, newBoard, newUsed, [dX, dY])
 
 	def print_board(self, board = None, onlyId = False):
@@ -188,7 +206,6 @@ class TileBoard:
 							outStr += "            "
 					rowInd += 1
 
-
 					if not oFound:
 						run = False
 					print(outStr)
@@ -200,7 +217,8 @@ class Tile:
 		self.tileArray = tileArray
 
 		self.isCorner = False
-		self.isFlipped = 0
+		self.flipH = 0
+		self.flipV = 0
 
 		lSide = ""
 		rSide = ""
@@ -240,15 +258,13 @@ class Tile:
 			return None
 
 	def get_edge(self, dir):
-		#print("get_edge", self.tileID, self.direction, dir, self.isFlipped, self.edges[easyMod(dir + self.direction)][self.isFlipped])
-		return self.edges[dir][self.isFlipped]
+		if dir in [0,2]:
+			return self.edges[dir][self.flipH]
+		if dir in [1,3]:
+			return self.edges[dir][self.flipV]
 
 	def get_rel_dir(self, dir):
-		if self.isFlipped == 0:
-			change = self.direction
-		else:
-			change = self.direction
-
+		change = self.direction
 		diff = dir - change
 
 		if diff < 0:
@@ -290,22 +306,47 @@ class Tile:
 		row = ""
 		if self.direction == 0:
 			row = self.tileArray[rowInd]
+			if self.flipV:
+				row = row[::-1]
+
 		elif self.direction == 1:
 			for i in self.tileArray:
 				row += i[rowInd]
-			#print(row)
-			row = row[::-1]
-			#print(row)
+			if self.flipH:
+				row = row[::-1]
+
 		elif self.direction == 2:
 			row = self.tileArray[len(self.tileArray) - (rowInd + 1)]
-			row = row[::-1]
+			if self.flipV:
+				row = row[::-1]
+
 		elif self.direction == 3:
 			for i in self.tileArray:
 				row += i[len(i) - (rowInd + 1)]
+			if self.flipH:
+				row = row[::-1]
 
-		if self.isFlipped:
-			row = row[::-1]
 		return row
+
+	def orient_tile(self, dir, edge):
+		foundEdge = self.find_edge(edge)[0]
+		print(foundEdge)
+		self.direction = easyMod(dir + 2) - foundEdge[0]
+		if self.direction < 0:
+			self.direction = 4 + self.direction
+
+		print(self.direction)
+
+		newEdge = self.get_edge(dir)
+		if abs(self.direction - dir) >= 2:
+			newEdge = newEdge[::-1]
+		print(newEdge, edge)
+		if newEdge[::-1] == edge:
+			print("flipped")
+			if dir in [0,2]:
+				self.flipV = abs(self.flipV - 1)
+			elif dir in [1,3]:
+				self.flipH = abs(self.flipH - 1)
 
 	def print_tile(self):
 		pass
