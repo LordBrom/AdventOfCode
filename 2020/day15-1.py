@@ -27,6 +27,4 @@ while turn < 2020:
 
 	turn += 1
 
-print(nums)
-
 print(nums[-1:][0])

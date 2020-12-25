@@ -36,11 +36,8 @@ ADAPTERS_RESULTS.append("")
 ADAPTERS_RESULTS.append("")
 ADAPTERS = [0] + sorted(inFile) + [max(inFile) + 3]
 
-print("starting")
 begin = time.time()
 result = check_adapters(0)
 end = time.time()
 
-
 print(result)
-print(end - begin)
