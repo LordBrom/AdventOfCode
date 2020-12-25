@@ -42,5 +42,4 @@ for bag in BAG_RULES:
 	if find_bag(bag):
 		count += 1
 
-print("Part 1: " + str(count))
-print("Part 2: " + str(count_bag(MY_BAG)))
+print(count_bag(MY_BAG))
