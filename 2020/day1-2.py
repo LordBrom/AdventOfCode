@@ -1,4 +1,4 @@
-inputsArray = open("day-1.in", "r").read().split("\n")
+inputsArray = open("day1.in", "r").read().split("\n")
 inputsArray.pop()
 
 for i in range(len(inputsArray)):

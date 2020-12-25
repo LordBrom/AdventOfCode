@@ -11,7 +11,7 @@ def find_trees(slope, rightMove, downMove):
 		down += downMove
 	return count
 
-slope = open("day-3.in", "r").read().split("\n")
+slope = open("day3.in", "r").read().split("\n")
 slope.pop()
 
 count1 = find_trees(slope, 1, 1)

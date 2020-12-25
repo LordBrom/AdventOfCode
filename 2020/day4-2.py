@@ -69,7 +69,7 @@ def check_passport(passport):
 
 	return goodPassport
 
-inFile = open("day-4.in", "r").read().split("\n\n")
+inFile = open("day4.in", "r").read().split("\n\n")
 inFile.pop()
 
 count = 0

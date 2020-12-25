@@ -32,7 +32,7 @@ def parse_rules(ruleFile):
 	return result
 
 
-inFile = open("day-7.in", "r").read().split("\n")
+inFile = open("day7.in", "r").read().split("\n")
 inFile.pop()
 
 BAG_RULES = parse_rules(inFile)

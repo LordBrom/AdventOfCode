@@ -34,7 +34,7 @@ def is_valid_password_part_1(input):
 
 count1 = 0
 count2 = 0
-inputText = open("day-2.in", "r").read().split("\n")
+inputText = open("day2.in", "r").read().split("\n")
 inputText.pop()
 for text in inputText:
 	if is_valid_password_part_1(text):

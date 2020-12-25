@@ -32,7 +32,7 @@ def count_group_part2(group):
 	return len(found)
 
 
-inFile = open("day-6.in", "r").read().split("\n\n")
+inFile = open("day6.in", "r").read().split("\n\n")
 inFile.pop()
 
 total = 0

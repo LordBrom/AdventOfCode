@@ -30,7 +30,7 @@ def find_seat(seatCode):
 
 
 
-inFile = open("day-5.in", "r").read().split("\n")
+inFile = open("day5.in", "r").read().split("\n")
 inFile.pop()
 
 maxSeat = 0
