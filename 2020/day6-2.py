@@ -1,16 +1,4 @@
-
-def count_group_part1(group):
-	found = []
-	count = 0
-	for person in group:
-		for question in person:
-			if not question in found:
-				count += 1
-				found.append(question)
-
-	return count
-
-def count_group_part2(group):
+def count_group(group):
 	found = []
 	first = True
 	for person in group:
@@ -28,9 +16,7 @@ def count_group_part2(group):
 
 		found = newFound
 
-
 	return len(found)
-
 
 inFile = open("day6.in", "r").read().split("\n\n")
 inFile.pop()
@@ -39,6 +25,6 @@ total = 0
 
 for group in inFile:
 	splitGroup = group.split("\n")
-	total += count_group_part2(splitGroup)
+	total += count_group(splitGroup)
 
 print(total)
