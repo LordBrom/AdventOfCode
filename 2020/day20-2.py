@@ -3,6 +3,8 @@ import math
 import copy
 #import numpy
 
+print("not solved")
+
 ROTATE_RIGHT = 1
 ROTATE_LEFT = -1
 

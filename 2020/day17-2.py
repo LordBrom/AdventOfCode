@@ -51,8 +51,6 @@ class CubeSpace:
 	def pos(self, activeOnly = False):
 		return [self.z, self.x, self.y, self.w]
 
-
-
 class PocketDimension:
 	def __init__(self, initialState):
 		self.cubes = []
@@ -82,7 +80,6 @@ class PocketDimension:
 					for wRow in col:
 						wRow.set_neighbors(self.cubes)
 
-
 	def print_plain(self, z):
 		plain = self.cubes[z]
 		for row in plain:
@@ -93,7 +90,6 @@ class PocketDimension:
 				else:
 					outStr += "."
 			print(outStr)
-
 
 	def print_all(self):
 		for num, plain in enumerate(self.cubes):
@@ -133,21 +129,15 @@ class PocketDimension:
 						wRow.use_next_status()
 		return count
 
-
-
-
 inFile = open("day17.in", "r").read().split("\n")
 inFile.pop()
 dimension = PocketDimension(inFile)
 
+dimension.cycle()
+dimension.cycle()
+dimension.cycle()
+dimension.cycle()
+dimension.cycle()
+dimension.cycle()
 
-#dimension.print_plain(len(dimension.cubes) // 2)
-dimension.cycle()
-dimension.cycle()
-dimension.cycle()
-dimension.cycle()
-dimension.cycle()
-dimension.cycle()
-#dimension.print_plain(len(dimension.cubes) // 2)
-#dimension.print_all()
 print(dimension.count_active())

@@ -1,5 +1,5 @@
 
-
+print("not solved")
 
 inFile = open("day23.in", "r").read().strip()
 

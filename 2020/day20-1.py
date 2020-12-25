@@ -1,7 +1,6 @@
 import re
 import math
 import copy
-#import numpy
 
 ROTATE_RIGHT = 1
 ROTATE_LEFT = -1
