@@ -1,7 +1,5 @@
 import re
 
-# part 1
-
 fields = [
 	['byr', True],
 	['iyr', True],
@@ -78,6 +76,5 @@ for i in inFile:
 	passport = i.replace("\n", " ")
 	if check_passport(passport):
 		count += 1
-
 
 print(count)
