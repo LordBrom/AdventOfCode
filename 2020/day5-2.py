@@ -28,19 +28,19 @@ def find_seat(seatCode):
 
 	return (row * 8) + col
 
-
-
 inFile = open("day5.in", "r").read().split("\n")
 inFile.pop()
 
 maxSeat = 0
+minSeat = 9999
 seats = []
 for seat in inFile:
 	maxSeat = max(maxSeat, find_seat(seat))
+	minSeat = min(minSeat, find_seat(seat))
 	seats.append(find_seat(seat))
 
 seats.sort()
 
-print(seats)
+mySeat = [x for x in range(minSeat, maxSeat) if x not in seats][0]
 
-print("Part 1: " + str(maxSeat))
+print(mySeat)
